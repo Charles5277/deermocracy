@@ -2,7 +2,7 @@ services:
   # 伺服器服務
   mc:
     image: itzg/minecraft-server
-    container_name: "mc-server"
+    container_name: "mc-cheese"
     tty: true
     stdin_open: true
     ports:
