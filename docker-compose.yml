@@ -8,6 +8,8 @@ services:
     ports:
       - "25565:25565"
     environment:
+      # 指定有權限管理的使用者
+      UID: 1004
       VERSION: 1.21
       # 自動同意伺服器的EULA
       EULA: "TRUE"
@@ -20,14 +22,14 @@ services:
       - ./data:/data
 
   restore-backup:
-    # Same image as mc, but any base image with bash and tar will work
+    # 同 mc 服務的 image
     image: itzg/mc-backup
     restart: "no"
     entrypoint: restore-tar-backup
     volumes:
-      # Must be same mount as mc service, needs to be writable
+      # 必須與 mc 服務掛載相同資料夾，但需要是可寫的
       - ./data:/data
-      # Must be same mount as backups service, but can be read-only
+      # 必須與 backups 服務掛載相同資料夾，可以是唯讀的
       - ./mc-backups:/backups:ro
 
   backups:
@@ -38,7 +40,7 @@ services:
     environment:
       BACKUP_INTERVAL: "2h"
       RCON_HOST: mc
-      # since this service waits for mc to be healthy, no initial delay is needed
+      # 由於已經判定伺服器已建立，所以不需要初始化延遲等待
       INITIAL_DELAY: 0
     volumes:
       - ./data:/data:ro
