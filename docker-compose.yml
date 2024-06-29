@@ -1,0 +1,45 @@
+services:
+  # 伺服器服務
+  mc:
+    image: itzg/minecraft-server
+    container_name: "mc-server"
+    tty: true
+    stdin_open: true
+    ports:
+      - "25565:25565"
+    environment:
+      VERSION: 1.21
+      # 自動同意伺服器的EULA
+      EULA: "TRUE"
+      # 設定分配8GB RAM
+      MEMORY: "8G"
+      # 設定JVM啟動參數，設定最多使用75% RAM
+      JVM_OPTS: "-XX:MaxRAMPercentage=75"
+    volumes:
+      # 在目前的目錄新增存放資料的目錄
+      - ./data:/data
+
+  restore-backup:
+    # Same image as mc, but any base image with bash and tar will work
+    image: itzg/mc-backup
+    restart: "no"
+    entrypoint: restore-tar-backup
+    volumes:
+      # Must be same mount as mc service, needs to be writable
+      - ./data:/data
+      # Must be same mount as backups service, but can be read-only
+      - ./mc-backups:/backups:ro
+
+  backups:
+    image: itzg/mc-backup
+    depends_on:
+      mc:
+        condition: service_healthy
+    environment:
+      BACKUP_INTERVAL: "2h"
+      RCON_HOST: mc
+      # since this service waits for mc to be healthy, no initial delay is needed
+      INITIAL_DELAY: 0
+    volumes:
+      - ./data:/data:ro
+      - ./mc-backups:/backups
