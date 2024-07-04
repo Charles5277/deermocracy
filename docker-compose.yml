@@ -43,6 +43,7 @@ services:
       # 由於已經判定伺服器已建立，所以不需要初始化延遲等待
       INITIAL_DELAY: 0
       PRUNE_BACKUPS_DAYS: 3
+      PAUSE_IF_NO_PLAYERS: "true"
     volumes:
       - ./data:/data:ro
       - ./mc-backups:/backups
