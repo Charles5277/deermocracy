@@ -38,10 +38,11 @@ services:
       mc:
         condition: service_healthy
     environment:
-      BACKUP_INTERVAL: "2h"
+      BACKUP_INTERVAL: "12h"
       RCON_HOST: mc
       # 由於已經判定伺服器已建立，所以不需要初始化延遲等待
       INITIAL_DELAY: 0
+      PRUNE_BACKUPS_DAYS: 3
     volumes:
       - ./data:/data:ro
       - ./mc-backups:/backups
